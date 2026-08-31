@@ -12,11 +12,11 @@ The Fibonacci sequence is a sequence of numbers where:
 
 ```
 TODO: Answer the following questions:
-fibonacci(5) = 
-fibonacci(6) = 
-fibonacci(7) = 
-fibonacci(8) = 
-fibonacci(9) = 
+fibonacci(5) = 5
+fibonacci(6) = 8
+fibonacci(7) = 13
+fibonacci(8) = 21
+fibonacci(9) = 34
 ```
 
 ## Basic implementation
@@ -39,15 +39,15 @@ The code version also tells you how much time does it take to complete each calc
 ```
 TODO:
 1. Explain what the code above is doing.
-A: 
+A:  The code above is utilizing recursion with two base cases of 0 and 1. And then calling the function for the two prior.
 2. What happens if we remove the "if ... return ..." and only keep the last line?
-A: 
+A: It will run until it throws a RecursionError when it reaches maximum depth.
 3. What is fibonacci(20)? how much time did it take to calculate that?
-A: 
+A: = 6765 It took 2.02e-03 seconds.
 4. What is fibonacci(30)? how much time did it take to calculate that?
-A: 
+A: =832040 and did it in 1.987e-01 seconds.
 5. How much time did it take you to calculate fibonacci(40)? (this might take a while...)
-A: 
+A: = 102334155 and it took 7.127 seconds.
 ```
 
 ## How many function calls?
@@ -55,12 +55,15 @@ A:
 Modify ``fibonacci_counting.py`` so that it does the same calculation as ``fibonacci.py``, but it also counts how many times the function ``fibonacci(n)`` had to be called. Then answer the following:
 ```
 TODO:
-1. How many function calls does fibonacci(1) take?
-2. How many function calls does fibonacci(5) take?
-3. How many function calls does fibonacci(10) take?
-4. Why is it so slow? Where does the complexity come from?
-5. Is this O(n)? is this O(2^n)? Why?
-6. Is this Ω(n)? Why?
+1. How many function calls does fibonacci(1) take? It is 1
+2. How many function calls does fibonacci(5) take? It is 15
+3. How many function calls does fibonacci(10) take? It is 177
+4. Why is it so slow? Where does the complexity come from? 
+The amount of times it needs to recalculate the same fibonacci values over and over. It is an exponentially growing recursion tree.
+5. Is this O(n)? is this O(2^n)? Why? It is o(2^n) because in the end it is like a recursion tree and though it is closer to 1.618. There is 2 additional calls every recursive call.
+6. Is this Ω(n)? Why? It grows faster than n so it is Ω(n).
+Yes because at runtime it grows faster than the linear function of n so it grows exponential.
+
 ```
 
 ## Memoization Optimization
@@ -68,12 +71,16 @@ TODO:
 Take a look at ``fibonacci_counting.py``, where memoization is used.
 ```
 TODO:
-1. How is this one different from the previous one?
+1. How is this one different from the previous one? It caches the existing calls so it stores the values so it doesn't need to compare as much.It can just retrieve stored calues.
 2. How much time does it take to calculate fibonacci(30)?
+It took 3.5800e-05 seconds.
 3. Why is it often faster?
+It just stores the existing calls so they don't need to be repeatedly recalculated.
 4. Also modify this file to count: how many times the function had to be called for fibonacci(30)?
+It is called 59 times.
 5. Is this O(n)? is this O(2^n)? Why?
-6. Is this Ω(n)? is this Ω(2^n)? Why?
+This is O(n) It is proportionate to the number input and is linear it is like a linkedlist addition. It only needs to be calculated once.
+6. Is this Ω(n)? is this Ω(2^n)? Why? It is Ω(n) because it recquires computing up to n.
 ```
 
 ## Extension: Staircase Problem
@@ -82,6 +89,7 @@ Implement ``fibonacci_threeway.py``, where:
 1. The first, second, and third numbers are ``1``.
 2. The numbers afterwards are the sum of the previous **THREE** numbers, instead of two.
 3. Your implementation should be optimized, taking less than 1 second to calculate ``fibonacci_threeway(50)``.
+It equals fibonacci_threeway(50) = 4045078385041 and it took significantly less than 1 second.
 
 ## Optional, challenge problems
 1. Instead of recursion, implement ``fibonacci(n)`` using iteration instead.
