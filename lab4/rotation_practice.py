@@ -90,17 +90,35 @@ def balance_factor(node):
   Return 0 if node is None.
   """
   # TODO 3.2A: Return get_height(node.left) - get_height(node.right).
+  if node is None:
+    return 0
+
+  return get_height(node.left) - get_height(node.right)
   raise NotImplementedError("Complete balance_factor")
 
 
 def rotate_left(tree, x):
-  """Perform a single left rotation around node x.
+  y = x.right
 
-  Pivots on x's right child y. Updates child pointers, parent pointers,
-  tree.root (if x was root), and recalculates heights for x and y.
-  """
-  # TODO 3.2B: Rewire pointers so y = x.right rises into x's position; update heights of x then y.
-  raise NotImplementedError("Complete rotate_left")
+  x.right = y.left
+
+  if y.left is not None:
+    y.left.parent = x
+
+  y.parent = x.parent
+
+  if x.parent is None:
+    tree.root = y
+  elif x == x.parent.left:
+    x.parent.left = y
+  else:
+    x.parent.right = y
+
+  y.left = x
+  x.parent = y
+
+  update_height(x)
+  update_height(y)
 
 
 def rotate_right(tree, y):
@@ -109,6 +127,27 @@ def rotate_right(tree, y):
   Pivots on y's left child x. Updates child pointers, parent pointers,
   tree.root (if y was root), and recalculates heights for y and x.
   """
+  x = y.left
+
+  y.left = x.right
+
+  if x.right is not None:
+    x.right.parent = y
+
+  x.parent = y.parent
+
+  if y.parent is None:
+    tree.root = x
+  elif y == y.parent.left:
+    y.parent.left = x
+  else:
+    y.parent.right = x
+
+  x.right = y
+  y.parent = x
+
+  update_height(y)
+  update_height(x)
   # TODO 3.2C: Rewire pointers so x = y.left rises into y's position; update heights of y then x.
   raise NotImplementedError("Complete rotate_right")
 
@@ -118,6 +157,8 @@ def rotate_left_right(tree, z):
 
   Rotates left on z's left child, then rotates right on z.
   """
+  rotate_left(tree, z.left)
+  rotate_right(tree, z)
   # TODO 3.2D: Call rotate_left on z.left, then rotate_right on z.
   raise NotImplementedError("Complete rotate_left_right")
 
@@ -127,6 +168,8 @@ def rotate_right_left(tree, z):
 
   Rotates right on z's right child, then rotates left on z.
   """
+  rotate_right(tree, z.right)
+  rotate_left(tree, z)
   # TODO 3.2E: Call rotate_right on z.right, then rotate_left on z.
   raise NotImplementedError("Complete rotate_right_left")
 
@@ -134,6 +177,53 @@ def rotate_right_left(tree, z):
 def avl_insert_iterative(tree, key):
   """Insert a key iteratively, restore AVL balance, and return its Node."""
   # TODO 4.1A: BST-insert with a loop, then walk parent pointers upward updating heights and rotating at the first unbalanced node.
+  parent = None
+  current = tree.root
+
+  while current is not None:
+    parent = current
+
+    if key < current.key:
+      current = current.left
+    elif key > current.key:
+      current = current.right
+    else:
+      return current
+
+  inserted = Node(key, parent)
+
+  if parent is None:
+    tree.root = inserted
+    return inserted
+
+  if key < parent.key:
+    parent.left = inserted
+  else:
+    parent.right = inserted
+
+  current = inserted.parent
+
+  while current is not None:
+    update_height(current)
+    bf = balance_factor(current)
+
+    if bf > 1:
+      if key < current.left.key:
+        rotate_right(tree, current)
+      else:
+        rotate_left_right(tree, current)
+      break
+
+    if bf < -1:
+      if key > current.right.key:
+        rotate_left(tree, current)
+      else:
+        rotate_right_left(tree, current)
+      break
+
+    current = current.parent
+
+  return inserted
   raise NotImplementedError("Complete avl_insert_iterative")
 
 
