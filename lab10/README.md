@@ -117,15 +117,20 @@ using its two endpoint labels.
 
 | Vertex removed | Edge added | `key[D]` | `key[E]` |
 |---|---|---|---|
-| `B` | TODO | TODO | TODO |
-| `C` | TODO | TODO | TODO |
-| `D` | TODO | TODO | TODO |
+| `B` | `A--B` | 4 | inf |
+| `C` | `B--C` | 4 | 6 |
+| `D` | `B--D` | 4 | 6 |
 
 1. Which vertex becomes `C`'s parent, and what causes the change? 
-
+C's parent becomes B because the edge B--C has weight 1,
+which is smaller than the previous connection A--C with weight 3.
+Prim's algorithm updates C's key from 3 to 1 and its parent from A to B.
 
 2. After removing `E`, what are the tree's four edges and total weight? 
+The four MST edges are A--B (2), B--C (1), B--D (4),
+and C--E (6).
 
+Total weight = 2 + 1 + 4 + 6 = 13.
 
 
 ### 1.2 Implementation
@@ -199,14 +204,18 @@ after each check, including checks that leave them unchanged.
 
 | Edge checked | Candidate | Distance of `v` | Parent of `v` |
 |---|---|---|---|
-| `B -> C` | TODO | TODO | TODO |
-| `C -> D` | TODO | TODO | TODO |
-| `C -> E` | TODO | TODO | TODO |
-| `D -> E` | TODO | TODO | TODO |
+| `B -> C` | 2 + 1 = 3 | 3 | A |
+| `C -> D` | 3 + 5 = 8 | 6 | B |
+| `C -> E` | 3 + 6 = 9 | 9 | C |
+| `D -> E` | 6 + 7 = 13 | 9 | C |
 
 Give the final distance array and the shortest path from `A` to `E`:
 
- **TODO**
+Final distance array: [0, 2, 3, 6, 9]
+
+Shortest path from A to E: A -> C -> E
+
+Total distance = 3 + 6 = 9.
 
 ### 2.2 Implementation
 
@@ -222,12 +231,32 @@ undirected graphs, including graphs with unreachable vertices.
 1. Change only the weight of `A--C` to `2.5`. Starting from `A`, what is
    `C`'s parent under each algorithm? What quantity does each algorithm
    minimize? 
+   Prim's algorithm: C's parent is B because B--C has weight 1,
+which is cheaper than A--C with weight 2.5.
+
+Dijkstra's algorithm: C's parent is A because the direct path
+A--C costs 2.5, while A--B--C costs 2 + 1 = 3.
+
+Prim's algorithm minimizes the total weight of the spanning tree.
+Dijkstra's algorithm minimizes the shortest-path distance from
+the source to each vertex.
 
 
 2. Consider the directed edges `S -> A: 2`, `S -> B: 5`, and `B -> A: -4`.
    Starting from `S`, which distance does Dijkstra finalize too early?
    Give the actual shortest distance and explain why the negative edge
    causes a problem.
+   Dijkstra finalizes A's distance as 2 too early.
+
+The actual shortest distance from S to A is 1, using the path
+S -> B -> A, with total weight 5 + (-4) = 1.
+
+Dijkstra processes A before B because 2 < 5. Once A is removed
+from the priority queue, its distance is considered final.
+The negative edge from B to A would improve A's distance later,
+but A is no longer in the queue.
+
+This is why Dijkstra requires nonnegative edge weights.
 
 
 3. Let `V` and `E` be the numbers of vertices and edges. For the provided
@@ -237,7 +266,27 @@ undirected graphs, including graphs with unreachable vertices.
    auxiliary space bounds. Exclude the input graph from space. What is
    the time bound if finding the minimum instead scans an unsorted array
    of vertices?
+Prim's Algorithm:
+- V removals from the priority queue.
+- At most E successful decrease-key operations.
+- Building the heap takes O(V).
+- Each removal and decrease-key takes O(log V).
+- Total time: O(V + (V + E) log V).
+- Auxiliary space: O(V) for the key array, parent array, and heap.
 
+Dijkstra's Algorithm:
+- At most V removals from the priority queue.
+- At most E successful decrease-key operations.
+- Building the heap takes O(V).
+- Each removal and decrease-key takes O(log V).
+- Total time: O(V + (V + E) log V).
+- Auxiliary space: O(V) for the distance array, parent array,
+  and heap.
+
+If finding the minimum instead scans an unsorted array,
+each extraction takes O(V), giving O(V^2) for all extractions.
+With O(1) updates and O(E) edge checks, the total time for
+both algorithms becomes O(V^2 + E).
 
 ---
 
